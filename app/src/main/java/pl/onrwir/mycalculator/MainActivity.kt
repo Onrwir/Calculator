@@ -5,31 +5,16 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
-import org.w3c.dom.Text
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
-    var tvResult :TextView? = null
+    var tvInput : TextView? = null
+    var lastNumeric : Boolean = true
+    var lastDot : Boolean = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        tvResult = findViewById<TextView>(R.id.tvResult)
-        val btnSeven = findViewById<Button>(R.id.btnSeven)
-        val btnEight = findViewById<Button>(R.id.btnEight)
-        val btnNine = findViewById<Button>(R.id.btnNine)
-        val btnDivide = findViewById<Button>(R.id.btnDivide)
-
-        val btnList = arrayOf(btnSeven, btnEight, btnNine, btnDivide)
-        for (button in btnList){
-            button.setOnClickListener(this)
-        }
-
-//        btnSeven.setOnClickListener(this)
-//        btnEight.setOnClickListener(this)
-//        btnNine.setOnClickListener(this)
-//        btnDivide.setOnClickListener(this)
-
+        tvInput = findViewById<TextView>(R.id.tvResult)
 
 
     }
@@ -37,13 +22,50 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(p0: View?) {
 
         when (p0?.id){
-            R.id.btnSeven -> {
-                val result = "Button seven clicked"
-                tvResult?.text = result
+            R.id.btnOne, R.id.btnTwo, R.id.btnThree, R.id.btnFour, R.id.btnFive, R.id.btnSix, R.id.btnSeven, R.id.btnEight, R.id.btnNine, R.id.btnZero -> {
+                tvInput?.append((p0 as Button).text)
+                lastNumeric = true
+                lastDot = false
+            }
+            R.id.btnCLR -> {
+                tvInput?.text = ""
+                lastNumeric = false
+                lastDot = true
+            }
+            R.id.btnDot ->
+            {
+                tvInput?.append(".")
+                lastDot = true
+                lastNumeric = false
+            }
+            R.id.btnDivide, R.id.btnMultiply, R.id.btnSubtract, R.id.btnAdd -> {
+                tvInput?.text?.let{
+                    if(lastNumeric && !isOperatorAdded(it.toString())){
+                        tvInput?.append((p0 as Button).text)
+                        lastNumeric = false
+                        lastDot = false
+                    }
+                }
+
+            }
+            R.id.btnEqual -> {
+
             }
 
         }
 
-        //Toast.makeText(this,"Button ${p0?.id} Clicked",Toast.LENGTH_LONG).show()
     }
+
+
+    private fun isOperatorAdded(value : String) : Boolean{
+        return if(value.startsWith("-")){
+            false
+        }else{
+            value.contains("/")
+                    || value.contains("*")
+                    || value.contains("+")
+                    || value.contains("-")
+        }
+    }
+
 }
